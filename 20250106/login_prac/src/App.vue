@@ -38,7 +38,12 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             required
             v-model="password"
+            @keydown=""
           />
+          <p v-show="showPWAlert">
+            Password must be at least 4 characters long and contain at least one
+            letter and one number.
+          </p>
         </div>
         <div class="flex items-start">
           <div class="flex items-start">
@@ -49,6 +54,7 @@
                 value=""
                 class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                 v-model="isChecked"
+                @click="showRememberAlert()"
               />
             </div>
             <label
@@ -66,7 +72,7 @@
         <button
           type="submit"
           class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          :disabled="!(email && password)"
+          :disabled="isSubmitValid"
         >
           Login to your account
         </button>
@@ -89,14 +95,37 @@ export default {
       email: "",
       password: "",
       isChecked: false,
+      isPWValid: false,
     };
   },
   methods: {
     handleSubmit($event) {
       $event.preventDefault();
       alert(
-        `Login Success!\nEmail: ${this.email}\nPassword: ${this.password}\nRemember Me: ${this.isChecked}`
+        "Form submitted successfully!"
+        // `Login Success!\nEmail: ${this.email}\nPassword: ${this.password}\nRemember Me: ${this.isChecked}`
       );
+    },
+    showRememberAlert() {
+      if (!this.isChecked) {
+        alert("Remember me is checked!");
+      }
+    },
+  },
+  computed: {
+    isSubmitValid() {
+      return !(this.email && this.password && this.isPWValid);
+    },
+    showPWAlert() {
+      const regex =
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{4,}$/;
+      if (regex.test(this.password)) {
+        this.isPWValid = true;
+        return false;
+      } else {
+        this.isPWValid = false;
+        return true;
+      }
     },
   },
 };
